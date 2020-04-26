@@ -8,6 +8,16 @@ $loader = new \Phalcon\Loader();
 $loader->registerDirs(
     [
         $config->application->controllersDir,
-        $config->application->modelsDir
+        $config->application->modelsDir,
+        $config->application->formsDir
     ]
-)->register();
+);
+
+$loader->registerNamespaces(
+    [
+        'App\Forms'  => APP_PATH .'/forms/',
+    ]
+);
+
+// Register autoloader
+$loader->register();

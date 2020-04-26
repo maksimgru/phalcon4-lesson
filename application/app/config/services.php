@@ -2,7 +2,10 @@
 declare(strict_types=1);
 
 use Phalcon\Escaper;
-use Phalcon\Flash\Direct as Flash;
+use Phalcon\Events\Manager as EventManager;
+use Phalcon\Flash\Session as Flash;
+use Phalcon\Mvc\Dispatcher;
+use Phalcon\Mvc\Dispatcher\Exception;
 use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\View\Engine\Php as PhpEngine;
@@ -10,12 +13,13 @@ use Phalcon\Mvc\View\Engine\Volt as VoltEngine;
 use Phalcon\Session\Adapter\Stream as SessionAdapter;
 use Phalcon\Session\Manager as SessionManager;
 use Phalcon\Url as UrlResolver;
+use Phalcon\Crypt;
 
 /**
  * Shared configuration service
  */
 $di->setShared('config', function () {
-    return include APP_PATH . "/config/config.php";
+    return include APP_PATH . '/config/config.php';
 });
 
 /**
@@ -96,7 +100,7 @@ $di->setShared('modelsMetadata', function () {
 $di->set('flash', function () {
     $escaper = new Escaper();
     $flash = new Flash($escaper);
-    $flash->setImplicitFlush(false);
+    $flash->setImplicitFlush(true);
     $flash->setCssClasses([
         'error'   => 'alert alert-danger',
         'success' => 'alert alert-success',
@@ -120,3 +124,54 @@ $di->setShared('session', function () {
 
     return $session;
 });
+
+/**
+ * phalcon-not-found-page-error-handler
+ */
+$di->set('dispatcher', function() {
+    $eventsManager = new EventManager();
+    $eventsManager->attach(
+        'dispatch:beforeException', function($event, $dispatcher, $exception) {
+        //Handle 404 exceptions
+        if ($exception instanceof Exception) {
+            $dispatcher->forward(
+                [
+                    'controller' => 'index',
+                    'action'     => 'show404',
+                ]
+            );
+
+            return false;
+        }
+        //Handle other exceptions
+        $dispatcher->forward(
+            [
+                'controller' => 'index',
+                'action'     => 'show503',
+            ]
+        );
+
+        return false;
+    });
+
+    $dispatcher = new Dispatcher();
+    //Bind the EventsManager to the dispatcher
+    $dispatcher->setEventsManager($eventsManager);
+
+    return $dispatcher;
+},
+true);
+
+/**
+ * Encryption/Decryption
+ */
+$di->set('crypt', function () {
+    $crypt = new Crypt();
+    // Set a global encryption key
+    $crypt->setKey(
+        "T4\xb1\x8d\xa9\x98\x05\\\x8c\xbe\x1d\T4\xb1\x8d\xa9\x98\x05\\\x8c\xbe\x1d\x07&[\x99\x18\xa4~Lc1\xbeW\xb3"
+    );
+
+    return $crypt;
+},
+true);

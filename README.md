@@ -34,3 +34,17 @@
 * DB username: `root`
 * DB password: `phalcon`
 * DB name: `phalcon_app`
+
+### Features list
+* Phalcon Login, Logout, Profile with Session
+    * Phalcon not found page error handler
+* Password Hashing and Cross-Site Request Forgery (CSRF) protection
+* Home, Login, Register Page Design
+    * Create New Routes
+    * Add Bootstrap 4.1
+    * Add Font Awesome
+* User Registration
+* Initializing forms
+* Request Environment (GET and POST Requests)
+* Flashing Messages
+* Designing a sign-up form
