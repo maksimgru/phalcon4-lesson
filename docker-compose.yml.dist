@@ -1,0 +1,66 @@
+version: '3.7'
+
+services:
+
+# MySQL
+    db:
+        image: mysql:8
+        container_name: mdev_mysql
+        command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci','--default-authentication-plugin=mysql_native_password']
+        environment:
+            MYSQL_DATABASE: phalcon_app
+            MYSQL_USER: phalcon
+            MYSQL_ROOT_PASSWORD: phalcon
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql
+        ports:
+            - '3307:3306'
+        volumes:
+                - ./volumes/mysql:/var/lib/mysql
+        networks:
+            - mdev_network
+
+# PHP-FPM
+    php-fpm:
+        container_name: mdev_php_fpm
+        restart: always
+        build:
+            context: ./env/docker/php-fpm
+        volumes:
+            - ./application:/var/www/mdev
+        networks:
+            - mdev_network
+
+# NGINX
+    nginx:
+        container_name: mdev_nginx
+        restart: always
+        build:
+            context: ./env/docker/nginx
+        volumes:
+            - ./application:/var/www/mdev
+            - ./volumes/nginx/log:/var/log/nginx
+        depends_on:
+            - php-fpm
+            - db
+        environment:
+            - HTTPS_METHOD=noredirect
+        ports:
+            - 8080:80
+        networks:
+            - mdev_network
+
+# Adminer
+    adminer:
+        image: dehy/adminer
+        container_name: mdev_adminer
+        restart: always
+        ports:
+            - 8088:80
+        networks:
+            - mdev_network
+
+# Network configuration
+networks:
+    mdev_network:
+        name: mdev_network
