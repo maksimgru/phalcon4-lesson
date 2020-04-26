@@ -48,3 +48,11 @@
 * Request Environment (GET and POST Requests)
 * Flashing Messages
 * Designing a sign-up form
+
+### Screenshots
+![Screenshot-home](application/screenshots/Screenshot-home.png "Screenshot-home")
+![Screenshot-register](application/screenshots/Screenshot-register.png "Screenshot-register")
+![Screenshot-register-validation](application/screenshots/Screenshot-register-validation.png "Screenshot-register-validation")
+![Screenshot-login](application/screenshots/Screenshot-login.png "Screenshot-login")
+![Screenshot-login-validation](application/screenshots/Screenshot-login-validation.png "Screenshot-login-validation")
+![Screenshot-profile](application/screenshots/Screenshot-profile.png "Screenshot-profile")
