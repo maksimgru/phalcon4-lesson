@@ -2,19 +2,24 @@
 
 //namespace App\Controllers;
 
+use App\Constants\RouteConst;
+use Phalcon\Http\ResponseInterface;
 use Phalcon\Messages\Messages;
 use Phalcon\Mvc\Controller;
+use Phalcon\Mvc\Router\Route;
 
 class ControllerBase extends Controller
 {
     /**
-     * @return \Phalcon\Http\ResponseInterface
+     * @return ResponseInterface|null
      */
-    public function authorized()
+    public function authorized(): ?ResponseInterface
     {
         if (!$this->isLoggedIn()) {
-            return $this->response->redirect('user/login');
+            return $this->redirectTo(RouteConst::ROUTE_NAME_LOGIN);
         }
+
+        return null;
     }
 
     /**
@@ -29,7 +34,7 @@ class ControllerBase extends Controller
      * @param string      $action
      * @param null|string $controller
      *
-     * @return void
+     * @return null
      */
     protected function forwardTo(
         string $action,
@@ -41,6 +46,26 @@ class ControllerBase extends Controller
                 'controller' => $controller ?: $this->router->getControllerName(),
             ])
         ;
+    }
+
+    /**
+     * @param string $routeName
+     * @param bool   $externalRedirect
+     * @param int    $statusCode
+     *
+     * @return ResponseInterface
+     */
+    protected function redirectTo(
+        string $routeName = RouteConst::ROUTE_NAME_HOME,
+        bool $externalRedirect = false,
+        int $statusCode = 302
+    ): ResponseInterface {
+        /** @var Route $route */
+        $route = $this->router->getRouteByName($routeName);
+        $route = $route ?: $this->router->getRouteByName(RouteConst::ROUTE_NAME_HOME);
+        $pattern = $route->getPattern();
+
+        return $this->response->redirect($pattern, $externalRedirect, $statusCode);
     }
 
     /**

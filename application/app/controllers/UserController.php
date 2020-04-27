@@ -2,9 +2,11 @@
 
 //namespace App\Controllers;
 
+use App\Constants\RouteConst;
 use App\Forms\RegisterForm;
 use App\Forms\LoginForm;
-use App\Models\Users;
+use App\Models\Role;
+use App\Models\User;
 use Phalcon\Http\ResponseInterface;
 
 class UserController extends ControllerBase
@@ -15,15 +17,16 @@ class UserController extends ControllerBase
     public function initialize()
     {
         $this->loginForm = new LoginForm();
-        $this->usersModel = new Users();
+        $this->usersModel = new User();
     }
 
     /**
-     * Users list
+     * User list
      */
     public function indexAction()
     {
-        $this->view->users = Users::find();
+        $this->tag->setTitle('All Users');
+        $this->view->users = User::find();
     }
 
     /**
@@ -31,7 +34,10 @@ class UserController extends ControllerBase
      */
     public function loginAction()
     {
-        $this->tag->setTitle('Login | Phalcon');
+        if ($this->isLoggedIn()) {
+            return $this->redirectTo();
+        }
+        $this->tag->setTitle('Login');
         $this->view->form = new LoginForm();
     }
 
@@ -48,7 +54,7 @@ class UserController extends ControllerBase
     {
         // check is POST request
         if (!$this->request->isPost()) {
-            return $this->response->redirect('user/login');
+            return $this->redirectTo(RouteConst::ROUTE_NAME_LOGIN);
         }
 
         // Validate CSRF token
@@ -69,7 +75,7 @@ class UserController extends ControllerBase
         // Find user with database
         $email    = $this->request->getPost('email');
         $password = $this->request->getPost('password');
-        $user = Users::findFirst([
+        $user = User::findFirst([
             'email = :email:',
             'bind' => [
                'email' => $email,
@@ -104,7 +110,7 @@ class UserController extends ControllerBase
         // Set a session
         $this->session->set('auth_user', $user);
 
-        return $this->response->redirect('user/profile');
+        return $this->redirectTo(RouteConst::ROUTE_NAME_PROFILE);
     }
 
     /**
@@ -112,7 +118,10 @@ class UserController extends ControllerBase
      */
     public function registerAction()
     {
-        $this->tag->setTitle('Register | Phalcon');
+        if ($this->isLoggedIn()) {
+            return $this->redirectTo();
+        }
+        $this->tag->setTitle('Register');
         $this->view->form = new RegisterForm();
     }
 
@@ -132,7 +141,7 @@ class UserController extends ControllerBase
 
         // Check Post request
         if (!$this->request->isPost()) {
-            return $this->response->redirect('user/register');
+            return $this->redirectTo(RouteConst::ROUTE_NAME_REGISTER);
         }
 
         // Check form validation
@@ -142,10 +151,10 @@ class UserController extends ControllerBase
 
             return $this->forwardTo('register');
         }
-
         // Populate user model
         $this->usersModel->setPassword($this->security->hash($this->request->getPost('password')));
         $this->usersModel->setActive(true);
+        $this->usersModel->setRole(Role::ROLE_NAME_USER);
         $now = new \DateTime();
         $this->usersModel->setCreatedAt($now);
         $this->usersModel->setUpdatedAt($now);
@@ -159,7 +168,7 @@ class UserController extends ControllerBase
 
         $this->setFlashMessages('Thanks for registering! Please enter your Email and Password to login.', 'success');
 
-        return $this->response->redirect('user/login');
+        return $this->redirectTo(RouteConst::ROUTE_NAME_LOGIN);
     }
 
 
@@ -169,7 +178,7 @@ class UserController extends ControllerBase
     public function profileAction()
     {
         $this->authorized();
-        $this->tag->setTitle('Profile | Phalcon');
+        $this->tag->setTitle('Profile');
         $this->view->user = $this->session->get('auth_user');
     }
 
@@ -181,7 +190,7 @@ class UserController extends ControllerBase
         // Destroy the whole session
         $this->session->destroy();
 
-        return $this->response->redirect('user/login');
+        return $this->redirectTo(RouteConst::ROUTE_NAME_LOGIN);
     }
 }
 

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use App\Plugins\ExceptionHandlerPlugin;
+use App\Plugins\SecurityPlugin;
 use Phalcon\Escaper;
 use Phalcon\Events\Manager as EventManager;
 use Phalcon\Flash\Session as SessionFlash;
@@ -11,6 +12,7 @@ use Phalcon\Mvc\View;
 use Phalcon\Mvc\View\Engine\Php as PhpEngine;
 use Phalcon\Mvc\View\Engine\Volt as VoltEngine;
 use Phalcon\Session\Adapter\Stream as SessionAdapter;
+use Phalcon\Session\Bag;
 use Phalcon\Session\Manager as SessionManager;
 use Phalcon\Url as UrlResolver;
 use Phalcon\Crypt;
@@ -126,6 +128,15 @@ $di->setShared('flash', function () {
 });
 
 /**
+ * Add the sessionBag to the DI
+ */
+$di->setShared('persistent', function () {
+    $session_bag = new Bag('sessionBag');
+
+    return $session_bag;
+});
+
+/**
  * Start the session the first time some component request the session service
  */
 $di->setShared('session', function () {
@@ -144,7 +155,11 @@ $di->setShared('session', function () {
  */
 $di->setShared('dispatcher', function() {
     $eventsManager = new EventManager();
+    // Check if the current user is allowed to access certain action
+    $eventsManager->attach('dispatch:beforeDispatch', new SecurityPlugin());
+    // Handle exceptions and not-found exceptions
     $eventsManager->attach('dispatch:beforeException', new ExceptionHandlerPlugin());
+
     $dispatcher = new Dispatcher();
     //Bind the EventsManager to the dispatcher
     $dispatcher->setEventsManager($eventsManager);

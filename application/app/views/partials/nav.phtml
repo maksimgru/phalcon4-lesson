@@ -1,5 +1,28 @@
+<?php use App\Constants\RouteConst; ?>
+<?php
+    $activeRouteHomeClasses = ($this->checkActiveRoute)(RouteConst::ROUTE_NAME_HOME) ? 'active' : '';
+    $homeUrl = $this->url->get(['for' => RouteConst::ROUTE_NAME_HOME]);
+
+    $activeRouteUsersClasses = ($this->checkActiveRoute)(RouteConst::ROUTE_NAME_USERS) ? 'active' : '';
+    $usersUrl = $this->url->get(['for' => RouteConst::ROUTE_NAME_USERS]);
+
+    $activeRouteProfileClasses = ($this->checkActiveRoute)(RouteConst::ROUTE_NAME_PROFILE) ? 'btn-light' : 'btn-outline-light';
+    $profileUrl = $this->url->get(['for' => RouteConst::ROUTE_NAME_PROFILE]);
+    $logoutUrl = $this->url->get(['for' => RouteConst::ROUTE_NAME_LOGOUT]);
+
+    $activeRouteLoginClasses = ($this->checkActiveRoute)([RouteConst::ROUTE_NAME_LOGIN, RouteConst::ROUTE_NAME_LOGIN_SUBMIT]) ? 'btn-light' : 'btn-outline-light';
+    $loginUrl = $this->url->get(['for' => RouteConst::ROUTE_NAME_LOGIN]);
+
+    $activeRouteRegisterClasses = ($this->checkActiveRoute)([RouteConst::ROUTE_NAME_REGISTER, RouteConst::ROUTE_NAME_REGISTER_SUBMIT]) ? 'btn-light' : 'btn-outline-light';
+    $registerUrl = $this->url->get(['for' => RouteConst::ROUTE_NAME_REGISTER]);
+?>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
-    <a class="navbar-brand" href="<?php echo $this->url->get('/'); ?>">Phalcon</a>
+    <a class="navbar-brand"
+       href="<?php echo $this->url->get(['for' => RouteConst::ROUTE_NAME_HOME]); ?>"
+    >
+        Phalcon
+    </a>
 
     <button class="navbar-toggler"
             type="button"
@@ -11,24 +34,45 @@
     >
         <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li class="nav-item <?php echo ($this->checkActiveRoute)('home') ? 'active' : ''; ?>">
-                <a class="nav-link" href="<?php echo $this->url->get('/'); ?>"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+            <li class="nav-item <?php echo $activeRouteHomeClasses; ?>">
+                <a class="nav-link" href="<?php echo $homeUrl; ?>">
+                    <i class="fa fa-home" aria-hidden="true"></i> Home
+                </a>
             </li>
+
             <?php if ($this->session->has('auth_user')) { ?>
-                <li class="nav-item <?php echo ($this->checkActiveRoute)('users') ? 'active' : ''; ?>">
-                    <a class="nav-link" href="<?php echo $this->url->get('user/index'); ?>"><i class="fa fa-users" aria-hidden="true"></i> Users</a>
+                <li class="nav-item <?php echo $activeRouteUsersClasses; ?>">
+                    <a class="nav-link" href="<?php echo $usersUrl; ?>">
+                        <i class="fa fa-users" aria-hidden="true"></i> Users
+                    </a>
                 </li>
             <?php } ?>
         </ul>
+
         <div class="my-2 my-lg-0">
             <?php if ($this->session->has('auth_user')) { ?>
-                <a class="btn mr-4 <?php echo ($this->checkActiveRoute)('profile') ? 'btn-light' : 'btn-outline-light'; ?>" href="<?php echo $this->url->get('user/profile'); ?>"><i class="fa fa-user" aria-hidden="true"></i> Profile</a>
-                <a class="btn btn-outline-warning" href="<?php echo $this->url->get('user/logout'); ?>"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+
+                <a class="btn mr-4 <?php echo $activeRouteProfileClasses; ?>" href="<?php echo $profileUrl; ?>">
+                    <i class="fa fa-user" aria-hidden="true"></i> Profile
+                </a>
+
+                <a class="btn btn-outline-warning" href="<?php echo $logoutUrl; ?>">
+                    <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
+                </a>
+
             <?php } else { ?>
-                <a class="btn mr-4 <?php echo ($this->checkActiveRoute)(['login', 'login-submit']) ? 'btn-light' : 'btn-outline-light'; ?>" href="<?php echo $this->url->get('user/login'); ?>"><i class="fa fa-sign-in" aria-hidden="true"></i> Login</a>
-                <a class="btn <?php echo ($this->checkActiveRoute)(['register', 'register-submit']) ? 'btn-light' : 'btn-outline-light'; ?>" href="<?php echo $this->url->get('user/register'); ?>"><i class="fa fa-user-plus" aria-hidden="true"></i> Register</a>
+
+                <a class="btn mr-4 <?php echo $activeRouteLoginClasses; ?>" href="<?php echo $loginUrl; ?>">
+                    <i class="fa fa-sign-in" aria-hidden="true"></i> Login
+                </a>
+
+                <a class="btn <?php echo $activeRouteRegisterClasses; ?>" href="<?php echo $registerUrl; ?>">
+                    <i class="fa fa-user-plus" aria-hidden="true"></i> Register
+                </a>
+
             <?php } ?>
         </div>
     </div>

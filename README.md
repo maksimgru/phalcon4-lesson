@@ -3,7 +3,7 @@
 ### Setup
 * Clone project
 * Copy customizable configs .dist files `$ bash ./env/copyconf.sh`
- * In docker-compose.yml you can override your params: containers ports, DB user\passwords, etc.
+ * In `docker-compose.yml` you can override your params: containers ports, DB user\passwords, etc.
 
 ### Build script
 * `$ bash ./env/build.sh`
@@ -12,10 +12,10 @@
     * composer install with "phalcon/devtools"
 
 ### Database
-* Copy dump file into db container `$ docker cp env/dump.sql.gz mdev_mysql:/`
+* Copy `dump.sql.gz` file into db container `$ docker cp env/dump.sql.gz mdev_mysql:/`
 * Enter in db container `$ docker exec -it mdev_mysql bash`
-* import dump file `$ gunzip < dump.sql.gz | mysql -uroot -pphalcon phalcon_app`
-* You can connect to db server via cli `$ mysql -uroot -pphalcon`
+* Import `dump.sql.gz` file `$ gunzip < dump.sql.gz | mysql -uroot -pphalcon phalcon_app`
+* You can connect to db via cli `$ mysql -uroot -pphalcon`
 * select DB `$ USE phalcon_app;`
 * show tables `$ SHOW TABLES;`
 * or using Adminer via `http://localhost:8088`
@@ -39,20 +39,23 @@
 * Phalcon Login, Logout, Profile with Session
     * Phalcon not found page error handler
 * Password Hashing and Cross-Site Request Forgery (CSRF) protection
-* Home, Login, Register Page Design
+* Home, AllUsers, Login, Register Page Design
     * Create New Routes
     * Add Bootstrap 4.1
     * Add Font Awesome
+* User Login
 * User Registration
-* Initializing forms
+* Initializing Forms
 * Request Environment (GET and POST Requests)
 * Flashing Messages
-* Designing a sign-up form
+
+# Demo users accounts
+* admin@example.com / 12345
+* user@example.com / 12345
 
 ### Screenshots
 ![Screenshot-home](application/screenshots/Screenshot-home.png "Screenshot-home")
-![Screenshot-register](application/screenshots/Screenshot-register.png "Screenshot-register")
-![Screenshot-register-validation](application/screenshots/Screenshot-register-validation.png "Screenshot-register-validation")
 ![Screenshot-login](application/screenshots/Screenshot-login.png "Screenshot-login")
-![Screenshot-login-validation](application/screenshots/Screenshot-login-validation.png "Screenshot-login-validation")
+![Screenshot-register](application/screenshots/Screenshot-register.png "Screenshot-register")
 ![Screenshot-profile](application/screenshots/Screenshot-profile.png "Screenshot-profile")
+![Screenshot-all-users](application/screenshots/Screenshot-all-users.png "Screenshot-all-users")

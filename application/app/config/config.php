@@ -20,12 +20,19 @@ return new \Phalcon\Config([
         'appDir'         => APP_PATH . '/',
         'controllersDir' => APP_PATH . '/controllers/',
         'modelsDir'      => APP_PATH . '/models/',
+        'modelsTraitsDir' => APP_PATH . '/models/traits/',
         'formsDir'       => APP_PATH . '/forms/',
         'migrationsDir'  => APP_PATH . '/migrations/',
         'viewsDir'       => APP_PATH . '/views/',
         'pluginsDir'     => APP_PATH . '/plugins/',
         'libraryDir'     => APP_PATH . '/library/',
+        'constantsDir'   => APP_PATH . '/constants/',
         'cacheDir'       => BASE_PATH . '/cache/',
         'baseUri'        => '/',
-    ]
+    ],
+    'date_format' => [
+        'date'     => 'Y-m-d',
+        'time'     => 'H:i:s',
+        'datetime' => 'Y-m-d H:i:s',
+    ],
 ]);

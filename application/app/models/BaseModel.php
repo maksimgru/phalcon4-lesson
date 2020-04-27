@@ -3,95 +3,34 @@
 namespace App\Models;
 
 use Phalcon\Mvc\Model;
+use Phalcon\Mvc\Model\ResultsetInterface;
 
 /**
  * Class BaseModel
  */
 class BaseModel extends Model
 {
-    const DATETIME_FORMAT = 'Y-m-d H:i:s';
-
     /**
-     * @var string
-     * @Column(column="created_at", type="datetime", nullable=false)
-     */
-    protected $createdAt;
-
-    /**
-     * @var string
-     * @Column(column="updated_at", type="datetime", nullable=false)
-     */
-    protected $updatedAt;
-
-    /**
-     * Returns the value of field created
+     * Allows to query a set of records that match the specified conditions
      *
-     * @return string
+     * @param mixed $parameters
+     *
+     * @return ResultsetInterface
      */
-    public function getCreatedAt(?string $format = null): string
+    public static function find($parameters = null): ResultsetInterface
     {
-        $datetime =  (new \DateTime())
-            ->createFromFormat(
-                self::DATETIME_FORMAT,
-                $this->createdAt
-            )
-        ;
-
-        if ($format) {
-            $datetime = $datetime->format($format);
-        }
-
-        return $datetime;
+        return parent::find($parameters);
     }
 
     /**
-     * Method to set the value of field created
+     * Allows to query the first record that match the specified conditions
      *
-     * @param \DateTime $createdAt
+     * @param mixed $parameters
      *
-     * @return BaseModel
+     * @return mixed
      */
-    public function setCreatedAt(\DateTime $createdAt): self
+    public static function findFirst($parameters = null)
     {
-        $this->createdAt = $createdAt->format(self::DATETIME_FORMAT);
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field updated
-     *
-     * @param null|string $format
-     *
-     * @return \DateTime|string
-     */
-    public function getUpdatedAt(?string $format = null)
-    {
-        $datetime =  (new \DateTime())
-            ->createFromFormat(
-                self::DATETIME_FORMAT,
-                $this->updatedAt
-            )
-        ;
-
-        if ($format) {
-            $datetime = $datetime->format($format);
-        }
-
-        return $datetime;
-    }
-
-    /**
-     * Method to set the value of field updated
-     *
-     * @param \DateTime $updatedAt
-     *
-     * @return BaseModel
-     */
-    public function setUpdatedAt(\DateTime $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt->format(self::DATETIME_FORMAT);
-
-        return $this;
+        return parent::findFirst($parameters);
     }
 }

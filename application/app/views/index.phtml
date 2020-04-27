@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo $this->tag->getTitle(); ?></title>
+    <title><?php echo $this->tag->getTitle(); ?> | Phalcon</title>
     <?php
         echo $this->tag->stylesheetLink('css/bootstrap.min.css');
         echo $this->tag->stylesheetLink('css/font-awesome.min.css');
@@ -15,13 +15,16 @@
 <?php echo $this->view->getPartial('partials/nav'); ?>
 
 <!-- Main Content -->
-<?php echo $this->getContent(); ?>
+<div class="container">
+    <?php echo $this->getContent(); ?>
+</div>
 
 <!-- Footer -->
 <?php
-    echo $this->tag->javascriptInclude('js/jquery-3.3.1.slim.min.js');
+    echo $this->tag->javascriptInclude('js/jquery-3.4.1.min.js');
     echo $this->tag->javascriptInclude('js/popper.min.js');
     echo $this->tag->javascriptInclude('js/bootstrap.min.js');
+    echo $this->tag->javascriptInclude('js/custom.js');
 ?>
 
 </body>

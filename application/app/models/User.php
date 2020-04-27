@@ -2,14 +2,12 @@
 
 namespace App\Models;
 
-use Phalcon\Mvc\Model\ResultInterface;
-use Phalcon\Mvc\Model\ResultsetInterface;
-use Phalcon\Validation;
-use Phalcon\Validation\Validator\Email as EmailValidator;
-use Phalcon\Validation\Validator\Uniqueness as UniquenessValidator;
+use App\Models\Traits\Timestampable;
 
-class Users extends BaseModel
+class User extends BaseModel
 {
+    use Timestampable;
+
     /**
      * @var integer
      * @Primary
@@ -43,11 +41,47 @@ class Users extends BaseModel
     protected $active;
 
     /**
+     * @var integer
+     * @Column(column="role_id", type="integer", length=11, nullable=true)
+     */
+    protected $role_id;
+
+    /**
+     * Initialize method for model.
+     */
+    public function initialize()
+    {
+        $this->setSchema('phalcon_app');
+        $this->setSource('users');
+        $this->belongsTo('role_id', Role::class, 'id', ['alias' => Role::class]);
+    }
+
+    /**
+     * Independent Column Mapping.
+     * Keys are the real names in the table and the values their names in the application
+     *
+     * @return array
+     */
+    public function columnMap(): array
+    {
+        return [
+            'id'         => 'id',
+            'name'       => 'name',
+            'email'      => 'email',
+            'password'   => 'password',
+            'active'     => 'active',
+            'role_id'    => 'role_id',
+            'created_at' => 'createdAt',
+            'updated_at' => 'updatedAt',
+        ];
+    }
+
+    /**
      * Method to set the value of field id
      *
      * @param integer $id
      *
-     * @return Users
+     * @return User
      */
     public function setId($id): self
     {
@@ -61,7 +95,7 @@ class Users extends BaseModel
      *
      * @param string|null $name
      *
-     * @return Users
+     * @return User
      */
     public function setName(?string $name = null): self
     {
@@ -75,7 +109,7 @@ class Users extends BaseModel
      *
      * @param string $email
      *
-     * @return Users
+     * @return User
      */
     public function setEmail(string $email): self
     {
@@ -89,7 +123,7 @@ class Users extends BaseModel
      *
      * @param string $password
      *
-     * @return Users
+     * @return User
      */
     public function setPassword(string $password): self
     {
@@ -103,11 +137,43 @@ class Users extends BaseModel
      *
      * @param bool $active
      *
-     * @return Users
+     * @return User
      */
     public function setActive(bool $active): self
     {
         $this->active = (int) $active;
+
+        return $this;
+    }
+
+    /**
+     * @param int $roleId
+     *
+     * @return User
+     */
+    public function setRoleId(int $roleId): self
+    {
+        $this->role_id = $roleId;
+
+        return $this;
+    }
+
+    /**
+     * @param Role|string|int $role
+     *
+     * @return User
+     */
+    public function setRole($role): self
+    {
+        if ($role instanceof Role) {
+            $this->role_id = $role->getId();
+        } else {
+            $this->role_id = Role::findIdByName(
+                \in_array($role, Role::ROLE_NAMES, true)
+                    ? $role
+                    : Role::ROLE_NAME_USER
+            );
+        }
 
         return $this;
     }
@@ -163,54 +229,26 @@ class Users extends BaseModel
     }
 
     /**
-     * Initialize method for model.
+     * @return int
      */
-    public function initialize()
+    public function getRoleId(): int
     {
-        $this->setSchema('phalcon_app');
-        $this->setSource('users');
+        return $this->role_id;
     }
 
     /**
-     * Allows to query a set of records that match the specified conditions
-     *
-     * @param mixed $parameters
-     *
-     * @return ResultsetInterface
+     * @return string
      */
-    public static function find($parameters = null): ResultsetInterface
+    public function getRoleName(): string
     {
-        return parent::find($parameters);
+        return $this->getRelated(Role::class)->getName();
     }
 
     /**
-     * Allows to query the first record that match the specified conditions
-     *
-     * @param mixed $parameters
-     *
-     * @return Users|ResultInterface
+     * @return Role
      */
-    public static function findFirst($parameters = null)
+    public function getRole(): Role
     {
-        return parent::findFirst($parameters);
-    }
-
-    /**
-     * Independent Column Mapping.
-     * Keys are the real names in the table and the values their names in the application
-     *
-     * @return array
-     */
-    public function columnMap(): array
-    {
-        return [
-            'id'         => 'id',
-            'name'       => 'name',
-            'email'      => 'email',
-            'password'   => 'password',
-            'active'     => 'active',
-            'created_at' => 'createdAt',
-            'updated_at' => 'updatedAt',
-        ];
+        return $this->getRelated(Role::class);
     }
 }

@@ -5,6 +5,6 @@
 class IndexController extends ControllerBase
 {
     public function indexAction() {
-        $this->tag->setTitle('Home | Phalcon');
+        $this->tag->setTitle('Home');
     }
 }
