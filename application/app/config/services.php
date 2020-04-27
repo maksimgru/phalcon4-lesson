@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
+use App\Plugins\ExceptionHandlerPlugin;
 use Phalcon\Escaper;
 use Phalcon\Events\Manager as EventManager;
-use Phalcon\Flash\Session as Flash;
+use Phalcon\Flash\Session as SessionFlash;
 use Phalcon\Mvc\Dispatcher;
-use Phalcon\Mvc\Dispatcher\Exception;
 use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\View\Engine\Php as PhpEngine;
@@ -20,6 +20,20 @@ use Phalcon\Crypt;
  */
 $di->setShared('config', function () {
     return include APP_PATH . '/config/config.php';
+});
+
+/**
+ * Check Active route name
+ */
+$di->setShared('checkActiveRoute', function () {
+    return function ($routesNames) {
+        /** @var array|string $routesNames */
+        return \in_array(
+            $this->getRouter()->getMatchedRoute()->getName(),
+            (array) $routesNames,
+            true
+        );
+    };
 });
 
 /**
@@ -97,9 +111,9 @@ $di->setShared('modelsMetadata', function () {
 /**
  * Register the session flash service with the Twitter Bootstrap classes
  */
-$di->set('flash', function () {
+$di->setShared('flash', function () {
     $escaper = new Escaper();
-    $flash = new Flash($escaper);
+    $flash = new SessionFlash($escaper);
     $flash->setImplicitFlush(true);
     $flash->setCssClasses([
         'error'   => 'alert alert-danger',
@@ -128,44 +142,20 @@ $di->setShared('session', function () {
 /**
  * Not found page error handler
  */
-$di->set('dispatcher', function() {
+$di->setShared('dispatcher', function() {
     $eventsManager = new EventManager();
-    $eventsManager->attach(
-        'dispatch:beforeException', function($event, $dispatcher, $exception) {
-        //Handle 404 exceptions
-        if ($exception instanceof Exception) {
-            $dispatcher->forward(
-                [
-                    'controller' => 'index',
-                    'action'     => 'show404',
-                ]
-            );
-
-            return false;
-        }
-        //Handle other exceptions
-        $dispatcher->forward(
-            [
-                'controller' => 'index',
-                'action'     => 'show503',
-            ]
-        );
-
-        return false;
-    });
-
+    $eventsManager->attach('dispatch:beforeException', new ExceptionHandlerPlugin());
     $dispatcher = new Dispatcher();
     //Bind the EventsManager to the dispatcher
     $dispatcher->setEventsManager($eventsManager);
 
     return $dispatcher;
-},
-true);
+});
 
 /**
  * Encryption/Decryption
  */
-$di->set('crypt', function () {
+$di->setShared('crypt', function () {
     $crypt = new Crypt();
     // Set a global encryption key
     $crypt->setKey(
@@ -173,5 +163,4 @@ $di->set('crypt', function () {
     );
 
     return $crypt;
-},
-true);
+});

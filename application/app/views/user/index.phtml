@@ -1,0 +1,42 @@
+<div class="container">
+    <h2 class="mb-4">All Users</h2>
+
+    <table class="table table-bordered table-hover">
+
+        <thead class="thead-light">
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+            </tr>
+        </thead>
+
+        <tfoot>
+            <tr class="text-muted font-italic">
+                <td colspan="5">Users total: <?php echo $users->count(); ?></td>
+            </tr>
+        </tfoot>
+
+        <tbody>
+            <?php if ($users->count() > 0) { ?>
+                <?php foreach ($users as $user) { ?>
+                    <tr>
+                        <td><?php echo $user->getId(); ?></td>
+                        <td><?php echo $user->getName(); ?></td>
+                        <td><?php echo $user->getEmail(); ?></td>
+                        <td><?php echo $user->getCreatedAt('Y-m-d H:i:s'); ?></td>
+                        <td><?php echo $user->getUpdatedAt('Y-m-d H:i:s'); ?></td>
+                    </tr>
+                <?php } ?>
+            <?php } else { ?>
+                <tr class="text-center text-muted display-4">
+                    <td colspan="5">No users ...</td>
+                </tr>
+            <?php } ?>
+        </tbody>
+
+    </table>
+
+</div>

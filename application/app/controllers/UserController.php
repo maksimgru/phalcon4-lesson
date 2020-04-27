@@ -19,6 +19,14 @@ class UserController extends ControllerBase
     }
 
     /**
+     * Users list
+     */
+    public function indexAction()
+    {
+        $this->view->users = Users::find();
+    }
+
+    /**
      * Login Page View
      */
     public function loginAction()

@@ -11,20 +11,24 @@
     >
         <span class="navbar-toggler-icon"></span>
     </button>
-
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li class="nav-item active">
+            <li class="nav-item <?php echo ($this->checkActiveRoute)('home') ? 'active' : ''; ?>">
                 <a class="nav-link" href="<?php echo $this->url->get('/'); ?>"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
             </li>
+            <?php if ($this->session->has('auth_user')) { ?>
+                <li class="nav-item <?php echo ($this->checkActiveRoute)('users') ? 'active' : ''; ?>">
+                    <a class="nav-link" href="<?php echo $this->url->get('user/index'); ?>"><i class="fa fa-users" aria-hidden="true"></i> Users</a>
+                </li>
+            <?php } ?>
         </ul>
         <div class="my-2 my-lg-0">
             <?php if ($this->session->has('auth_user')) { ?>
-                <a class="btn btn-light mr-4" href="<?php echo $this->url->get('user/profile'); ?>"><i class="fa fa-user" aria-hidden="true"></i> Profile</a>
-                <a class="btn btn-danger" href="<?php echo $this->url->get('user/logout'); ?>"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                <a class="btn mr-4 <?php echo ($this->checkActiveRoute)('profile') ? 'btn-light' : 'btn-outline-light'; ?>" href="<?php echo $this->url->get('user/profile'); ?>"><i class="fa fa-user" aria-hidden="true"></i> Profile</a>
+                <a class="btn btn-outline-warning" href="<?php echo $this->url->get('user/logout'); ?>"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
             <?php } else { ?>
-                <a class="btn btn-light mr-4" href="<?php echo $this->url->get('user/login'); ?>"><i class="fa fa-sign-in" aria-hidden="true"></i> Login</a>
-                <a class="btn btn-outline-light" href="<?php echo $this->url->get('user/register'); ?>"><i class="fa fa-user-plus" aria-hidden="true"></i> Register</a>
+                <a class="btn mr-4 <?php echo ($this->checkActiveRoute)(['login', 'login-submit']) ? 'btn-light' : 'btn-outline-light'; ?>" href="<?php echo $this->url->get('user/login'); ?>"><i class="fa fa-sign-in" aria-hidden="true"></i> Login</a>
+                <a class="btn <?php echo ($this->checkActiveRoute)(['register', 'register-submit']) ? 'btn-light' : 'btn-outline-light'; ?>" href="<?php echo $this->url->get('user/register'); ?>"><i class="fa fa-user-plus" aria-hidden="true"></i> Register</a>
             <?php } ?>
         </div>
     </div>

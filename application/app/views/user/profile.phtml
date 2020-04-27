@@ -4,7 +4,7 @@
         <div class="card-body">
             <h5 class="card-title">Hello, <?php echo $user->getName(); ?></h5>
             <p class="card-text"><?php echo $user->getEmail(); ?></p>
-            <p class="card-text"><small class="text-muted"><em>Created at</em> <?php echo $user->getCreatedAt('Y-m-d'); ?></small></p>
+            <p class="card-text"><small class="text-muted"><em>Created at</em> <?php echo $user->getCreatedAt('Y-m-d H:i:s'); ?></small></p>
         </div>
     </div>
 </div>
