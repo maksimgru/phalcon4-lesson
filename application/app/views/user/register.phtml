@@ -1,7 +1,7 @@
 <div class="container">
-    <h2>Register</h2>
+    <h2 class="mb-4">Register</h2>
 
-    <p><?php echo $this->flash->output() ?></p>
+    <?php echo $this->view->getPartial('partials/alerts'); ?>
 
     <?php echo $this->tag->form('user/register/submit'); ?>
 
@@ -11,7 +11,7 @@
         </div>
 
         <div class="form-group">
-            <label for="email">E-Mail</label>
+            <label for="email">Email</label>
             <?php echo $form->render('email'); ?>
         </div>
 

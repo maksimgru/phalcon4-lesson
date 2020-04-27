@@ -126,7 +126,7 @@ $di->setShared('session', function () {
 });
 
 /**
- * phalcon-not-found-page-error-handler
+ * Not found page error handler
  */
 $di->set('dispatcher', function() {
     $eventsManager = new EventManager();

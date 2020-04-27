@@ -17,11 +17,5 @@
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true
-    },
-    "autoload": {
-        "psr-2": {
-            "App\\": "app/"
-        },
-        "files": [ "vendor/symfony/var-dumper/Resources/functions" ]
     }
 }

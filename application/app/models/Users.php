@@ -1,6 +1,6 @@
 <?php
 
-//namespace App\Models;
+namespace App\Models;
 
 use Phalcon\Mvc\Model\ResultInterface;
 use Phalcon\Mvc\Model\ResultsetInterface;
@@ -160,39 +160,6 @@ class Users extends BaseModel
     public function getActive(): bool
     {
         return (bool) $this->active;
-    }
-
-    /**
-     * Validations and business logic
-     *
-     * @return boolean
-     */
-    public function validation(): bool
-    {
-        $validator = new Validation();
-
-        $validator->add(
-            'email',
-            new EmailValidator(
-                [
-                    'model'   => $this,
-                    'message' => 'Please enter a correct email address',
-                ]
-            )
-        );
-
-        $validator->add(
-            'email',
-            new UniquenessValidator(
-                [
-                    'model'   => $this,
-                    'message' => 'Another user with same email already exists',
-                    'cancelOnFail' => true,
-                ]
-            )
-        );
-
-        return $this->validate($validator);
     }
 
     /**

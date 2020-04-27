@@ -4,6 +4,7 @@
 
 use App\Forms\RegisterForm;
 use App\Forms\LoginForm;
+use App\Models\Users;
 use Phalcon\Http\ResponseInterface;
 
 class UserController extends ControllerBase
@@ -22,11 +23,7 @@ class UserController extends ControllerBase
      */
     public function loginAction()
     {
-        /**
-         * Changing dynamically the Document Title
-         */
         $this->tag->setTitle('Login | Phalcon');
-        // Login Form
         $this->view->form = new LoginForm();
     }
 
@@ -39,7 +36,7 @@ class UserController extends ControllerBase
      *
      * @return ResponseInterface
      */
-    public function loginSubmitAction()
+    public function loginSubmitAction(): ?ResponseInterface
     {
         // check is POST request
         if (!$this->request->isPost()) {
@@ -48,21 +45,15 @@ class UserController extends ControllerBase
 
         // Validate CSRF token
         if (!$this->security->checkToken()) {
-            $this->flash->error('Invalid CSRF Token');
+            $this->setFlashMessages('Invalid CSRF Token');
 
-            return $this->dispatcher->forward([
-                'controller' => $this->router->getControllerName(),
-                'action'     => 'login',
-            ]);
+            return $this->forwardTo('login');
         }
 
         // Check form validation
         $this->loginForm->bind($this->request->getPost(), $this->usersModel);
         if (!$this->loginForm->isValid()) {
-            foreach ($this->loginForm->getMessages() as $message) {
-                $this->flash->error($message);
-                break;
-            }
+            $this->setFlashMessages($this->loginForm->getMessages());
 
             return $this->forwardTo('login');
         }
@@ -83,21 +74,21 @@ class UserController extends ControllerBase
             // exists or not, the script will take roughly the same amount as
             // it will always be computing a hash.
             $this->security->hash(rand());
-            $this->flash->error('That username was not found - try again');
+            $this->setFlashMessages('That username was not found - try again');
 
             return $this->forwardTo('login');
         }
 
         // Check password
         if (!$this->security->checkHash($password, $user->password)) {
-            $this->flash->error('Your password is incorrect - try again.');
+            $this->setFlashMessages('Your password is incorrect - try again.');
 
             return $this->forwardTo('login');
         }
 
         // Check User Active
         if (!$user->getActive()) {
-            $this->flash->error('User Deactivate');
+            $this->setFlashMessages('User Deactivate');
 
             return $this->forwardTo('login');
         }
@@ -125,9 +116,9 @@ class UserController extends ControllerBase
      * @param: email
      * @param: password
      *
-     * @return ResponseInterface|void
+     * @return ResponseInterface
      */
-    public function registerSubmitAction()
+    public function registerSubmitAction(): ?ResponseInterface
     {
         $form = new RegisterForm();
 
@@ -139,10 +130,7 @@ class UserController extends ControllerBase
         // Check form validation
         $form->bind($this->request->getPost(), $this->usersModel);
         if (!$form->isValid($this->request->getPost(), $this->usersModel)) {
-            foreach ($form->getMessages() as $message) {
-                $this->flash->error($message);
-                break;
-            }
+            $this->setFlashMessages($form->getMessages());
 
             return $this->forwardTo('register');
         }
@@ -156,15 +144,12 @@ class UserController extends ControllerBase
 
         // Check save
         if (!$this->usersModel->save()) {
-            foreach ($this->usersModel->getMessages() as $message) {
-                $this->flash->error($message);
-                break;
-            }
+            $this->setFlashMessages($this->usersModel->getMessages());
 
             return $this->forwardTo('register');
         }
 
-        $this->flash->success('Thanks for registering!');
+        $this->setFlashMessages('Thanks for registering! Please enter your Email and Password to login.', 'success');
 
         return $this->response->redirect('user/login');
     }

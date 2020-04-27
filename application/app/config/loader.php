@@ -15,7 +15,8 @@ $loader->registerDirs(
 
 $loader->registerNamespaces(
     [
-        'App\Forms'  => APP_PATH .'/forms/',
+        'App\Forms'       => APP_PATH . '/forms/',
+        'App\Models'      => APP_PATH . '/models/',
     ]
 );
 

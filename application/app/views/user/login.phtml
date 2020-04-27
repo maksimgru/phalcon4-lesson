@@ -1,11 +1,12 @@
 <div class="container">
-    <h2>Login</h2>
-    <p><?php echo $this->flash->output(); ?></p>
+    <h2 class="mb-4">Login</h2>
+
+    <?php echo $this->view->getPartial('partials/alerts'); ?>
 
     <?php echo $this->tag->form('user/login/submit'); ?>
 
         <div class="form-group">
-            <label for="email">E-Mail</label>
+            <label for="email">Email</label>
             <?php echo $form->render('email'); ?>
         </div>
 

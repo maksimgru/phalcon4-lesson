@@ -40,8 +40,8 @@ try {
      * Handle the request
      */
     $application = new Application($di);
-
-    echo $application->handle($_SERVER['REQUEST_URI'])->getContent();
+    $response = $application->handle($_SERVER['REQUEST_URI']);
+    $response->send();
 } catch (\Exception $e) {
     echo $e->getMessage() . '<br>';
     echo '<pre>' . $e->getTraceAsString() . '</pre>';
